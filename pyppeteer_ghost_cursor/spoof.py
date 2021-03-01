@@ -243,7 +243,7 @@ class GhostCursor:
             try:
                 await self.page._client.send(
                     "DOM.scrollIntoViewIfNeeded",
-                    {"objectId": elem._remoteObject.objectId},
+                    {"objectId": elem._remoteObject["objectId"]},
                 )
             except:
                 await elem.evaluate(
