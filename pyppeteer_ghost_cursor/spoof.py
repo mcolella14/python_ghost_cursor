@@ -291,3 +291,7 @@ def createCursor(
         # Start random mouse movements. Do not await the promise but return immediately
         asyncio.ensure_future(cursor.randomMove())  # fire and forget
     return cursor
+
+def get_path(start: Dict, end: Dict) -> List[Dict]:
+    vectors = path(Vector(**start), Vector(**end))
+    return [el.__dict__ for el in vectors]
