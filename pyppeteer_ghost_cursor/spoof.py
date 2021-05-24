@@ -207,7 +207,7 @@ class GhostCursor:
                 await asyncio.sleep(waitForClick / 1000)
             await self.page.mouse.up()
         except Exception as exc:
-            logger.debug("Warning: could not click mouse, error message: %s", error)
+            logger.debug("Warning: could not click mouse, error message: %s", exc)
 
         await asyncio.sleep(random.random() * 2)
         self.toggleRandomMove(True)
