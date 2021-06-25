@@ -4,6 +4,9 @@ Python port of <a href="https://github.com/Xetera/ghost-cursor">Xetera/ghost-cur
 > Generate realistic, human-like mouse movement data between coordinates or navigate between elements with puppeteer
 like the definitely-not-robot you are.
 
+## Installation
+`pip install pyppeteer_ghost_cursor`
+
 ## Usage
 
 Generating movement data between 2 coordinates.
