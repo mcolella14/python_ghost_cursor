@@ -11,7 +11,15 @@ import numpy as np
 import random
 from typing import Union, Coroutine, Optional, Dict, List
 from pyppeteer.page import Page
-from pyppeteer.jshandle import ElementHandle
+
+try:
+    # pyppeteer/pyppeteer@pup2.1.1 branch
+    # https://github.com/pyppeteer/pyppeteer/blob/pup2.1.1/pyppeteer/jshandle.py
+    from pyppeteer.jshandle import ElementHandle
+except ModuleNotFoundError:
+    # pyppeteer/pyppeteer@dev branch
+    # https://github.com/pyppeteer/pyppeteer/blob/dev/pyppeteer/element_handle.py
+    from pyppeteer.element_handle import ElementHandle
 
 from pyppeteer_ghost_cursor.math import (
     Vector,
@@ -76,7 +84,10 @@ async def getElementBox(
     quads = None
     try:
         quads = await page._client.send(
-            "DOM.getContentQuads", {"objectId": element._remoteObject["objectId"],}
+            "DOM.getContentQuads",
+            {
+                "objectId": element._remoteObject["objectId"],
+            },
         )
     except:
         logger.debug("Quads not found, trying regular boundingBox")
@@ -284,13 +295,16 @@ class GhostCursor:
 
 
 def createCursor(
-    page, start: Vector = origin, performRandomMoves: bool = False
+    page, start: Union[Vector, Dict] = origin, performRandomMoves: bool = False
 ) -> Coroutine[None, None, GhostCursor]:
+    if isinstance(start, dict):
+        start = Vector(**start)
     cursor = GhostCursor(page, start)
     if performRandomMoves:
         # Start random mouse movements. Do not await the promise but return immediately
         asyncio.ensure_future(cursor.randomMove())  # fire and forget
     return cursor
+
 
 def get_path(start: Dict, end: Dict) -> List[Dict]:
     vectors = path(Vector(**start), Vector(**end))
