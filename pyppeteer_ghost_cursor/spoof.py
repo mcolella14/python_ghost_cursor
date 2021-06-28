@@ -257,9 +257,9 @@ class GhostCursor:
                     {"objectId": elem._remoteObject["objectId"]},
                 )
             except:
-                await elem.evaluate(
-                    "e => e.scrollIntoView()"
-                )  # use regular JS scroll method as a fallback
+                await self.page.evaluate(
+                    "e => e.scrollIntoView()", elem
+                )  # use regular JS scroll method as a fallback (use Page.evaluate for backwards compatibility)
         box = await getElementBox(self.page, elem)
         if box is None:
             raise Exception(
