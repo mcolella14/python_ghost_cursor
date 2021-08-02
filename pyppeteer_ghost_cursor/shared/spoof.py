@@ -9,11 +9,13 @@ from pyppeteer_ghost_cursor.shared.math import (
     bezierCurve,
 )
 
+
 def fitts(distance: float, width: float) -> float:
     a = 0
     b = 2
     id_ = math.log2(distance / width + 1)
     return a + b * id_
+
 
 def path(
     start: Vector, end: Union[Dict, Vector], spreadOverride: Optional[float] = None
@@ -48,6 +50,25 @@ overshootThreshold = 500
 def shouldOvershoot(a: Vector, b: Vector) -> bool:
     return magnitude(direction(a, b)) > overshootThreshold
 
+
 def get_path(start: Dict, end: Dict) -> List[Dict]:
     vectors = path(Vector(**start), Vector(**end))
     return [el.__dict__ for el in vectors]
+
+
+def getRandomBoxPoint(box: Dict, paddingPercentage: Optional[float] = None) -> Vector:
+    """Get a random point on a box"""
+    paddingWidth = paddingHeight = 0
+    if (
+        paddingPercentage is not None
+        and paddingPercentage > 0
+        and paddingPercentage < 100
+    ):
+        paddingWidth = box["width"] * paddingPercentage / 100
+        paddingHeight = box["height"] * paddingPercentage / 100
+    return Vector(
+        box["x"] + (paddingWidth / 2) + random.random() * (box["width"] - paddingWidth),
+        box["y"]
+        + (paddingHeight / 2)
+        + random.random() * (box["height"] - paddingHeight),
+    )

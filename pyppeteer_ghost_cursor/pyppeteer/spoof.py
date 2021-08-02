@@ -19,28 +19,10 @@ from pyppeteer_ghost_cursor.shared.math import (
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared.spoof import path, shouldOvershoot
+from pyppeteer_ghost_cursor.shared.spoof import path, shouldOvershoot, getRandomBoxPoint
 
 
 logger = logging.getLogger(__name__)
-
-
-def getRandomBoxPoint(box: Dict, paddingPercentage: Optional[float] = None) -> Vector:
-    """Get a random point on a box"""
-    paddingWidth = paddingHeight = 0
-    if (
-        paddingPercentage is not None
-        and paddingPercentage > 0
-        and paddingPercentage < 100
-    ):
-        paddingWidth = box["width"] * paddingPercentage / 100
-        paddingHeight = box["height"] * paddingPercentage / 100
-    return Vector(
-        box["x"] + (paddingWidth / 2) + random.random() * (box["width"] - paddingWidth),
-        box["y"]
-        + (paddingHeight / 2)
-        + random.random() * (box["height"] - paddingHeight),
-    )
 
 
 async def getRandomPagePoint(page: Page) -> Coroutine[None, None, Vector]:
@@ -184,11 +166,11 @@ class GhostCursor:
         if isinstance(selector, str):
             if "//" in selector:
                 if waitForSelector:
-                    await self.page.waitForXpath(timeout=waitForSelector)
+                    await self.page.waitForXpath(selector, timeout=waitForSelector)
                 elem = (await self.page.xpath(selector))[0]
             else:
                 if waitForSelector:
-                    await self.page.waitForSelector(timeout=waitForSelector)
+                    await self.page.waitForSelector(selector, timeout=waitForSelector)
                 elem = await self.page.querySelector(selector)
             if elem is None:
                 raise Exception(

@@ -3,6 +3,8 @@ import logging
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
 
+### EXPORTS
+
 from .shared import path
 
 # To support deprecations
@@ -26,3 +28,6 @@ def installMouseHelper(*args, **kwargs):
         """
     )
     return install_mouse_helper(*args, **kwargs)
+
+
+__all__ = ["path", "createCursor", "installMouseHelper"]
