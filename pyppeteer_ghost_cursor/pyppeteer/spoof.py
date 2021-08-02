@@ -1,13 +1,6 @@
-# TODO:
-# - Add click and moveTo
-# - Double check for completion
-# - Actually make a repo
-# - Publish
-
 import asyncio
 import logging
 import math
-import numpy as np
 import random
 from typing import Union, Coroutine, Optional, Dict, List
 from pyppeteer.page import Page
@@ -21,24 +14,15 @@ except ModuleNotFoundError:
     # https://github.com/pyppeteer/pyppeteer/blob/dev/pyppeteer/element_handle.py
     from pyppeteer.element_handle import ElementHandle
 
-from pyppeteer_ghost_cursor.math import (
+from pyppeteer_ghost_cursor.shared.math import (
     Vector,
-    magnitude,
-    direction,
     origin,
-    bezierCurve,
     overshoot,
 )
+from pyppeteer_ghost_cursor.shared.spoof import path, shouldOvershoot
 
 
 logger = logging.getLogger(__name__)
-
-
-def fitts(distance: float, width: float) -> float:
-    a = 0
-    b = 2
-    id_ = math.log2(distance / width + 1)
-    return a + b * id_
 
 
 def getRandomBoxPoint(box: Dict, paddingPercentage: Optional[float] = None) -> Vector:
@@ -122,40 +106,6 @@ async def getElementBox(
                 else elementBox.y
             )
     return elementBox
-
-
-def path(
-    start: Vector, end: Union[Dict, Vector], spreadOverride: Optional[float] = None
-) -> List[Vector]:
-    defaultWidth = 100
-    minSteps = 25
-    if isinstance(end, dict):
-        width = end["width"]
-        end = Vector(end["x"], end["y"])
-    else:
-        width = defaultWidth
-    curve = bezierCurve(start, end, spreadOverride)
-    length = curve.length * 0.8
-    baseTime = random.random() * minSteps
-    steps = math.ceil((math.log2(fitts(length, width) + 1) + baseTime) * 3)
-    s_vals = np.linspace(0.0, 1.0, steps)
-    points = curve.evaluate_multi(s_vals)
-    vectors = []
-    for i in range(steps):
-        vectors.append(Vector(points[0][i], points[1][i]))
-    return clampPositive(vectors)
-
-
-def clampPositive(vectors: List[Vector]) -> List[Vector]:
-    clamp0 = lambda elem: max(0, elem)
-    return [Vector(clamp0(el.x), clamp0(el.y)) for el in vectors]
-
-
-overshootThreshold = 500
-
-
-def shouldOvershoot(a: Vector, b: Vector) -> bool:
-    return magnitude(direction(a, b)) > overshootThreshold
 
 
 class GhostCursor:
@@ -294,9 +244,9 @@ class GhostCursor:
         self.toggleRandomMove(True)
 
 
-def createCursor(
+def create_cursor(
     page, start: Union[Vector, Dict] = origin, performRandomMoves: bool = False
-) -> Coroutine[None, None, GhostCursor]:
+) -> GhostCursor:
     if isinstance(start, dict):
         start = Vector(**start)
     cursor = GhostCursor(page, start)
@@ -304,8 +254,3 @@ def createCursor(
         # Start random mouse movements. Do not await the promise but return immediately
         asyncio.ensure_future(cursor.randomMove())  # fire and forget
     return cursor
-
-
-def get_path(start: Dict, end: Dict) -> List[Dict]:
-    vectors = path(Vector(**start), Vector(**end))
-    return [el.__dict__ for el in vectors]

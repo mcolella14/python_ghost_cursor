@@ -1,0 +1,1 @@
+from .spoof import get_path as path
