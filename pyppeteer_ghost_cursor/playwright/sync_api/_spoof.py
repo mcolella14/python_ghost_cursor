@@ -160,7 +160,7 @@ def create_cursor(page, start: Union[Vector, Dict] = origin) -> GhostCursor:
     if isinstance(start, dict):
         start = Vector(**start)
     cursor = GhostCursor(page, start)
-    # TODO: Make this work with the sync API
+    # Can't seem to get random movement to work with Playwright.
     # if perform_random_moves:
-    # asyncio.ensure_future(cursor.random_move()) # fire and forget
+    #   asyncio.ensure_future(cursor.random_move()) # fire and forget
     return cursor

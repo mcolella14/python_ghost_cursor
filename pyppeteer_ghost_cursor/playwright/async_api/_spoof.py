@@ -159,12 +159,11 @@ class GhostCursor:
         self.toggle_random_move(True)
 
 
-def create_cursor(
-    page, start: Union[Vector, Dict] = origin, perform_random_moves: bool = False
-) -> GhostCursor:
+def create_cursor(page, start: Union[Vector, Dict] = origin) -> GhostCursor:
     if isinstance(start, dict):
         start = Vector(**start)
     cursor = GhostCursor(page, start)
-    if perform_random_moves:
-        asyncio.ensure_future(cursor.random_move())  # fire and forget
+    # Can't seem to get random movement to work with Playwright.
+    # if perform_random_moves:
+    #   asyncio.ensure_future(cursor.random_move()) # fire and forget
     return cursor
