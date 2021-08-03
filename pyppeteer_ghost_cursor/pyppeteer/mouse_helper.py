@@ -3,7 +3,7 @@ from typing import Coroutine
 from pathlib import Path
 
 
-async def install_mouse_helper(page: Page) -> Coroutine[None, None, None]:
+async def install_mouse_helper(page: Page):
     js_text = Path(__file__).parent.joinpath("../js/mouseHelper.js").read_text()
     await page.evaluateOnNewDocument(
         "() => {"

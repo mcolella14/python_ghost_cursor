@@ -56,7 +56,9 @@ def get_path(start: Dict, end: Dict) -> List[Dict]:
     return [el.__dict__ for el in vectors]
 
 
-def get_random_box_point(box: Dict, padding_percentage: Optional[float] = None) -> Vector:
+def get_random_box_point(
+    box: Dict, padding_percentage: Optional[float] = None
+) -> Vector:
     """Get a random point on a box"""
     paddingWidth = paddingHeight = 0
     if (

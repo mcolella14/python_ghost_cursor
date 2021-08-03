@@ -18,7 +18,11 @@ from pyppeteer_ghost_cursor.shared.math import (
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared.spoof import path, should_overshoot, get_random_box_point
+from pyppeteer_ghost_cursor.shared.spoof import (
+    path,
+    should_overshoot,
+    get_random_box_point,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -90,14 +94,14 @@ async def get_element_box(
 
 
 class GhostCursor:
-    def __init__(self, page, start: Vector):
+    def __init__(self, page: Page, start: Vector):
         self.page = page
         self.previous = start
         self.moving = False
         self.overshoot_spread = 10
         self.overshoot_radius = 120
 
-    async def random_move(self) -> Coroutine[None, None, None]:
+    async def random_move(self):
         """Start random mouse movements. Function recursively calls itself"""
         try:
             if not self.moving:
@@ -111,9 +115,7 @@ class GhostCursor:
         except:
             logger.debug("Warning: stopping random mouse movements")
 
-    async def trace_path(
-        self, vectors: List[Vector], abort_on_move: bool = False
-    ) -> Coroutine[None, None, None]:
+    async def trace_path(self, vectors: List[Vector], abort_on_move: bool = False):
         """Move the mouse over a number of vectors"""
         for v in vectors:
             try:
@@ -128,7 +130,7 @@ class GhostCursor:
                     return
                 logger.debug("Warning: could not move mouse, error message: %s", exc)
 
-    def toggle_random_move(self, random_: bool):
+    def toggle_random_move(self, random_: bool) -> None:
         self.moving = not random_
 
     async def click(
@@ -218,7 +220,7 @@ class GhostCursor:
         self.previous = destination
         self.toggle_random_move(True)
 
-    async def moveTo(self, destination: dict) -> Coroutine[None, None, None]:
+    async def moveTo(self, destination: dict):
         destination_vector = Vector(destination["x"], destination["y"])
         self.toggle_random_move(False)
         await self.trace_path(path(self.previous, destination_vector))
