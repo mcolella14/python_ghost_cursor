@@ -1,5 +1,4 @@
 from pyppeteer.page import Page
-from typing import Coroutine
 from pathlib import Path
 
 
