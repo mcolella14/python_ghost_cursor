@@ -16,6 +16,8 @@ def createCursor(*args, **kwargs):
         This method will be removed in a future release.
         """
     )
+    if "performRandomMoves" in kwargs:
+        kwargs["perform_random_moves"] = kwargs["performRandomMoves"]        
     return create_cursor(*args, **kwargs)
 
 
