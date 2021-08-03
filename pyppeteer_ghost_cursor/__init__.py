@@ -18,6 +18,7 @@ def createCursor(*args, **kwargs):
     )
     if "performRandomMoves" in kwargs:
         kwargs["perform_random_moves"] = kwargs["performRandomMoves"]
+        del kwargs ["performRandomMoves"]
     return create_cursor(*args, **kwargs)
 
 
