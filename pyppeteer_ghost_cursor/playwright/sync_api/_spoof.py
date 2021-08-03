@@ -5,12 +5,12 @@ import random
 from typing import Union, Optional, Dict, List
 from playwright.sync_api import Page, ElementHandle
 
-from pyppeteer_ghost_cursor.shared.math import (
+from pyppeteer_ghost_cursor.shared._math import (
     Vector,
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared.spoof import (
+from pyppeteer_ghost_cursor.shared._spoof import (
     path,
     should_overshoot,
     get_random_box_point,

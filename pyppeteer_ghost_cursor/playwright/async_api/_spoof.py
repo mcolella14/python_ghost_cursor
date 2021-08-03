@@ -4,12 +4,12 @@ import random
 from typing import Union, Coroutine, Optional, Dict, List
 from playwright.async_api import Page, ElementHandle, CDPSession
 
-from pyppeteer_ghost_cursor.shared.math import (
+from pyppeteer_ghost_cursor.shared._math import (
     Vector,
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared.spoof import (
+from pyppeteer_ghost_cursor.shared._spoof import (
     path,
     should_overshoot,
     get_random_box_point,
