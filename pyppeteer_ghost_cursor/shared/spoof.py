@@ -47,7 +47,7 @@ def clampPositive(vectors: List[Vector]) -> List[Vector]:
 overshootThreshold = 500
 
 
-def shouldOvershoot(a: Vector, b: Vector) -> bool:
+def should_overshoot(a: Vector, b: Vector) -> bool:
     return magnitude(direction(a, b)) > overshootThreshold
 
 
@@ -56,16 +56,16 @@ def get_path(start: Dict, end: Dict) -> List[Dict]:
     return [el.__dict__ for el in vectors]
 
 
-def getRandomBoxPoint(box: Dict, paddingPercentage: Optional[float] = None) -> Vector:
+def get_random_box_point(box: Dict, padding_percentage: Optional[float] = None) -> Vector:
     """Get a random point on a box"""
     paddingWidth = paddingHeight = 0
     if (
-        paddingPercentage is not None
-        and paddingPercentage > 0
-        and paddingPercentage < 100
+        padding_percentage is not None
+        and padding_percentage > 0
+        and padding_percentage < 100
     ):
-        paddingWidth = box["width"] * paddingPercentage / 100
-        paddingHeight = box["height"] * paddingPercentage / 100
+        paddingWidth = box["width"] * padding_percentage / 100
+        paddingHeight = box["height"] * padding_percentage / 100
     return Vector(
         box["x"] + (paddingWidth / 2) + random.random() * (box["width"] - paddingWidth),
         box["y"]

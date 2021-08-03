@@ -10,7 +10,7 @@ from pyppeteer_ghost_cursor.shared.math import (
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared.spoof import path, shouldOvershoot, getRandomBoxPoint
+from pyppeteer_ghost_cursor.shared.spoof import path, should_overshoot, get_random_box_point
 
 
 logger = logging.getLogger(__name__)
@@ -27,11 +27,11 @@ class GhostCursor:
 
     def get_random_page_point(self) -> Vector:
         """Get a random point on a browser window"""
-        targetId = self.page.target._targetId
+        target_id = self.page.target._targetId
         window = self.cdp_session.send(
-            "Browser.getWindowForTarget", {"targetId": targetId}
+            "Browser.getWindowForTarget", {"targetId": target_id}
         )
-        return getRandomBoxPoint(
+        return get_random_box_point(
             {
                 "x": origin.x,
                 "y": origin.y,
@@ -123,9 +123,9 @@ class GhostCursor:
             raise Exception(
                 "Could not find the dimensions of the element you're clicking on, this might be a bug?"
             )
-        destination = getRandomBoxPoint(box, padding_percentage)
+        destination = get_random_box_point(box, padding_percentage)
         dimensions = {"height": box["height"], "width": box["width"]}
-        overshooting = shouldOvershoot(self.previous, destination)
+        overshooting = should_overshoot(self.previous, destination)
         to = (
             overshoot(destination, self.overshoot_radius)
             if overshooting
@@ -134,13 +134,13 @@ class GhostCursor:
         self.trace_path(path(self.previous, to))
 
         if overshooting:
-            boundingBox = {
+            bounding_box = {
                 "height": dimensions["height"],
                 "width": dimensions["width"],
                 "x": destination.x,
                 "y": destination.y,
             }
-            correction = path(to, boundingBox, self.overshoot_spread)
+            correction = path(to, bounding_box, self.overshoot_spread)
             self.trace_path(correction)
         self.previous = destination
         self.toggle_random_move(True)
