@@ -1,15 +1,16 @@
 import asyncio
 import logging
+import time
 import random
-from typing import Union, Coroutine, Optional, Dict, List
-from playwright.async_api import Page, ElementHandle, CDPSession
+from typing import Union, Optional, Dict, List
+from playwright.sync_api import Page, ElementHandle
 
-from pyppeteer_ghost_cursor.shared._math import (
+from python_ghost_cursor.shared._math import (
     Vector,
     origin,
     overshoot,
 )
-from pyppeteer_ghost_cursor.shared._spoof import (
+from python_ghost_cursor.shared._spoof import (
     path,
     should_overshoot,
     get_random_box_point,
@@ -26,16 +27,12 @@ class GhostCursor:
         self.moving = False
         self.overshoot_spread = 10
         self.overshoot_radius = 120
+        self.cdp_session = page.context.new_cdp_session(page)
 
-    async def get_cdp_session(self) -> Coroutine[None, None, CDPSession]:
-        if not hasattr(self, "cdp_session"):
-            self.cdp_session = await self.page.context.new_cdp_session(self.page)
-        return self.cdp_session
-
-    async def get_random_page_point(self) -> Coroutine[None, None, Vector]:
+    def get_random_page_point(self) -> Vector:
         """Get a random point on a browser window"""
         target_id = self.page.target._targetId
-        window = (await self.get_cdp_session()).send(
+        window = self.cdp_session.send(
             "Browser.getWindowForTarget", {"targetId": target_id}
         )
         return get_random_box_point(
@@ -51,8 +48,8 @@ class GhostCursor:
         """Start random mouse movements. Function recursively calls itself"""
         try:
             if not self.moving:
-                rand = await self.get_random_page_point()
-                await self.trace_path(path(self.previous, rand), True)
+                rand = self.get_random_page_point()
+                self.trace_path(path(self.previous, rand), True)
                 self.previous = rand
             await asyncio.sleep(random.random() * 2)
             asyncio.ensure_future(
@@ -61,59 +58,59 @@ class GhostCursor:
         except:
             logger.debug("Warning: stopping random mouse movements")
 
-    async def trace_path(self, vectors: List[Vector], abort_on_move: bool = False):
+    def trace_path(self, vectors: List[Vector], abort_on_move: bool = False) -> None:
         """Move the mouse over a number of vectors"""
         for v in vectors:
             try:
                 # In case this is called from random mouse movements and the users wants to move the mouse, abort
                 if abort_on_move and self.moving:
                     return
-                await self.page.mouse.move(v.x, v.y)
+                self.page.mouse.move(v.x, v.y)
                 self.previous = v
             except Exception as exc:
                 # Exit function if the browser is no longer connected
-                if not (await self.page.browser.is_connected()):
+                if not self.page.browser.is_connected():
                     return
                 logger.debug("Warning: could not move mouse, error message: %s", exc)
 
     def toggle_random_move(self, random_: bool):
         self.moving = not random_
 
-    async def click(
+    def click(
         self,
         selector: Optional[Union[str, ElementHandle]],
         padding_percentage: Optional[float] = None,
         wait_for_selector: Optional[float] = None,
         wait_for_click: Optional[float] = None,
-    ):
+    ) -> None:
         self.toggle_random_move(False)
         if selector is not None:
-            await self.move(selector, padding_percentage, wait_for_selector)
+            self.move(selector, padding_percentage, wait_for_selector)
             self.toggle_random_move(False)
 
         try:
-            await self.page.mouse.down()
+            self.page.mouse.down()
             if wait_for_click is not None:
-                await asyncio.sleep(wait_for_click / 1000)
-            await self.page.mouse.up()
+                time.sleep(wait_for_click / 1000)
+            self.page.mouse.up()
         except Exception as exc:
             logger.debug("Warning: could not click mouse, error message: %s", exc)
 
-        await asyncio.sleep(random.random() * 2)
+        time.sleep(random.random() * 2)
         self.toggle_random_move(True)
 
-    async def move(
+    def move(
         self,
         selector: Union[str, ElementHandle],
         padding_percentage: Optional[float] = None,
         wait_for_selector: Optional[float] = None,
-    ):
+    ) -> None:
         self.toggle_random_move(False)
         elem = None
         if isinstance(selector, str):
             if wait_for_selector:
-                await self.page.wait_for_selector(selector, timeout=wait_for_selector)
-            elem = await self.page.query_selector(selector)
+                self.page.wait_for_selector(selector, timeout=wait_for_selector)
+            elem = self.page.query_selector(selector)
             if elem is None:
                 raise Exception(
                     'Could not find element with selector "${}", make sure you\'re waiting for the elements with "puppeteer.wait_for_selector"'.format(
@@ -124,8 +121,8 @@ class GhostCursor:
             elem = selector
 
         # Make sure the object is in view
-        await elem.scroll_into_view_if_needed()
-        box = await elem.bounding_box()
+        elem.scroll_into_view_if_needed()
+        box = elem.bounding_box()
         if box is None:
             raise Exception(
                 "Could not find the dimensions of the element you're clicking on, this might be a bug?"
@@ -138,7 +135,7 @@ class GhostCursor:
             if overshooting
             else destination
         )
-        await self.trace_path(path(self.previous, to))
+        self.trace_path(path(self.previous, to))
 
         if overshooting:
             bounding_box = {
@@ -148,14 +145,14 @@ class GhostCursor:
                 "y": destination.y,
             }
             correction = path(to, bounding_box, self.overshoot_spread)
-            await self.trace_path(correction)
+            self.trace_path(correction)
         self.previous = destination
         self.toggle_random_move(True)
 
-    async def move_to(self, destination: dict):
+    def move_to(self, destination: dict) -> None:
         destination_vector = Vector(destination["x"], destination["y"])
         self.toggle_random_move(False)
-        await self.trace_path(path(self.previous, destination_vector))
+        self.trace_path(path(self.previous, destination_vector))
         self.toggle_random_move(True)
 
 

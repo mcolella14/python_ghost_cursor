@@ -5,14 +5,14 @@ Python port of <a href="https://github.com/Xetera/ghost-cursor">Xetera/ghost-cur
 like the definitely-not-robot you are.
 
 ## Installation
-`pip install pyppeteer_ghost_cursor`
+`pip install python_ghost_cursor`
 
 ## Usage
 
 Generating movement data between 2 coordinates.
 
 ```python
-from pyppeteer_ghost_cursor import path
+from python_ghost_cursor import path
 
 start = {
     "x": 220,
@@ -41,7 +41,7 @@ Usage with Pyppeteer:
 ```python
 import asyncio
 import pyppeteer
-from pyppeteer_ghost_cursor.pyppeteer import create_cursor
+from python_ghost_cursor.pyppeteer import create_cursor
 
 async def main(url):
   selector = "#sign-up button"
@@ -61,7 +61,7 @@ Usage with Playwright (async):
 ```python
 import asyncio
 from playwright.async_api import async_playwright
-from pyppeteer_ghost_cursor.playwright.async_api import create_cursor
+from python_ghost_cursor.playwright.async_api import create_cursor
 
 async def main():
   async with async_playwright() as p:
@@ -81,7 +81,7 @@ Usage with Playwright (sync):
 
 ```python
 from playwright.sync_api import sync_playwright
-from pyppeteer_ghost_cursor.playwright.sync_api import create_cursor
+from python_ghost_cursor.playwright.sync_api import create_cursor
 
 def main():
   sync with sync_playwright() as p:
