@@ -61,7 +61,7 @@ Usage with Playwright (async):
 ```python
 import asyncio
 from playwright.async_api import async_playwright
-from python_ghost_cursor.playwright.async_api import create_cursor
+from python_ghost_cursor.playwright_async import create_cursor
 
 async def main():
   async with async_playwright() as p:
@@ -81,7 +81,7 @@ Usage with Playwright (sync):
 
 ```python
 from playwright.sync_api import sync_playwright
-from python_ghost_cursor.playwright.sync_api import create_cursor
+from python_ghost_cursor.playwright_sync import create_cursor
 
 def main():
   sync with sync_playwright() as p:

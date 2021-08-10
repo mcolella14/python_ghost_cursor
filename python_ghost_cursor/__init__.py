@@ -5,7 +5,7 @@ _logger.setLevel(logging.DEBUG)
 
 ### EXPORTS
 
-from .shared import path
+from .shared._spoof import get_path as path
 
 # To support deprecations
 def createCursor(*args, **kwargs):
