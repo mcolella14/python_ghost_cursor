@@ -1,4 +1,4 @@
-# Pyppeteer Ghost Cursor
+# Python Ghost Cursor
 Python port of <a href="https://github.com/Xetera/ghost-cursor">Xetera/ghost-cursor</a>, for use with Pyppeteer and Playwright.
 
 > Generate realistic, human-like mouse movement data between coordinates or navigate between elements with Pyppeteer/Playwright
