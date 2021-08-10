@@ -1,1 +1,1 @@
-include pyppeteer_ghost_cursor/js/*.js
+include python_ghost_cursor/js/*.js
