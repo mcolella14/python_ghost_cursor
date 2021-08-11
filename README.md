@@ -84,7 +84,7 @@ from playwright.sync_api import sync_playwright
 from python_ghost_cursor.playwright_sync import create_cursor
 
 def main():
-  sync with sync_playwright() as p:
+  with sync_playwright() as p:
     selector = "#sign-up button"
     browser = p.chromium.launch(channel="chrome", headless=False)
     page = browser.new_page()
