@@ -5,10 +5,11 @@ import setuptools
 HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
-README = (HERE / "README.md").read_text()
+INACTIVE_MESSAGE = """<h1>THIS PROJECT IS NO LONGER ACTIVE. PLEASE USE <a href="https://pypi.org/project/python-ghost-cursor/">python_ghost_cursor</a> INSTEAD.</h1>\n\n"""
+README = INACTIVE_MESSAGE + (HERE / "README.md").read_text()
 setuptools.setup(
     name="pyppeteer_ghost_cursor",
-    version="0.2.2",
+    version="0.2.3",
     description="Pyppeteer implementation of Xetera/ghost-cursor",
     long_description=README,
     long_description_content_type="text/markdown",
