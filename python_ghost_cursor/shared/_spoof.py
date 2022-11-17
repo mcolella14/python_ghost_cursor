@@ -29,7 +29,7 @@ def path(
         width = defaultWidth
     curve = bezierCurve(start, end, spreadOverride)
     length = curve.length * 0.8
-    baseTime = random.random() * minSteps
+    baseTime = random.uniform(0.3, 1.0) * minSteps
     steps = math.ceil((math.log2(fitts(length, width) + 1) + baseTime) * 3)
     s_vals = np.linspace(0.0, 1.0, steps)
     points = curve.evaluate_multi(s_vals)
